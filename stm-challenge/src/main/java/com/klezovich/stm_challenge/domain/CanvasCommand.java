@@ -8,6 +8,7 @@ public class CanvasCommand {
 	private static final String createCmdRegExpStr = "C ([0-9]+) ([0-9]+)";
 	private static final String lineCmdRegExpStr = "L ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)";
 	private static final String rectCmdRegExpStr = "R ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)";
+	private static final String fillCmdRegExpStr = "B ([0-9]+) ([0-9]+) ([a-z])";
 	private static final String quitCmdRegExpStr = "Q";
 	
 	private CanvasCommandType cmdType;
@@ -18,7 +19,7 @@ public class CanvasCommand {
 	private int x2;
 	private int y1; 
 	private int y2; 
-	private char c; 
+	private char color; 
 	
 	public enum CanvasCommandType{
 	  CREATE, DRAW_LINE, DRAW_RECTANGLE, FILL, QUIT;
@@ -103,6 +104,25 @@ public class CanvasCommand {
 			return c; 
 		}
 		
+		p = Pattern.compile( fillCmdRegExpStr );
+		m = p.matcher( cmdStr );
+		if( m.matches() ) {
+			c.setCmdType( CanvasCommandType.FILL );
+			
+			int x1 = Integer.parseInt( m.group(1) );
+			int y1 = Integer.parseInt( m.group(2) );
+			char color = m.group(3).charAt(0);
+			
+			if( x1<=0 || y1 <=0 ) {
+				throw new RuntimeException("All coordinates must be non-negative");
+			}
+			
+			c.setX1( x1 );
+			c.setY1( y1 );
+			c.setColor( color );
+			
+			return c;
+		}
 		
 		p = Pattern.compile( quitCmdRegExpStr );
 		m = p.matcher( cmdStr );
@@ -181,12 +201,12 @@ public class CanvasCommand {
 		this.y2 = y2;
 	}
 
-	public char getC() {
-		return c;
+	public char getColor() {
+		return color;
 	}
 
-	public void setC(char c) {
-		this.c = c;
+	public void setColor(char color) {
+		this.color = color;
 	}
 	
 	

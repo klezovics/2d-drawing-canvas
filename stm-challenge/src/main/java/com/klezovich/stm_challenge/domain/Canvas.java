@@ -1,5 +1,10 @@
 package com.klezovich.stm_challenge.domain;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 import com.klezovich.stm_challenge.domain.CanvasCommand.CanvasCommandType;
 import com.klezovich.stm_challenge.domain.CanvasCommand.LineType;
 
@@ -24,10 +29,86 @@ public class Canvas {
 			executeDrawRectangleCommand(cc);
 		}
 		
+		if( cc.getCmdType() == CanvasCommandType.FILL ) {
+			executeFillCommand(cc);
+		}
+		
 		if( cc.getCmdType() == CanvasCommandType.QUIT ) {
 			executeQuitCommand(cc);
 		}
 		
+	}
+	
+	private void colorCell( CanvasCell cc, char color ) {
+		grid[cc.getY()-1][cc.getX()-1] = color;
+	}
+	
+	private void executeFillCommand( CanvasCommand cc ) {
+		
+		int x = cc.getX1();
+		int y = cc.getY1();
+		char color = cc.getColor();
+		
+		if( !coordinatesFitInCanvas(cc) )
+		  throw new RuntimeException("The supplied coordinate is outside of the current canvas");
+		
+		CanvasCell c = new CanvasCell(x,y);
+		Queue<CanvasCell> q = new LinkedList<CanvasCell>();
+		q.add(c);
+		
+		while( !q.isEmpty() ) {
+			
+			CanvasCell curCel = q.poll();
+			List<CanvasCell> lc = getNeighbourCells( curCel, color );
+			q.addAll(lc);
+			colorCell(curCel, color);
+			System.out.println("Coloring:"+curCel.getX() +" " + curCel.getY());
+			this.draw();
+		}
+		
+		
+	}
+	
+	
+	
+	private List<CanvasCell> getNeighbourCells( CanvasCell c, char color ) {
+		
+		List<CanvasCell> li = new ArrayList<CanvasCell>();
+		
+		int x=c.getX();
+		int y=c.getY();
+		
+		//Lower neighbour
+		int x1=x;
+		int y1=y+1;
+		
+		if( y1<=height && grid[y1-1][x1-1] != 'x' && grid[y1-1][x1-1] != color )
+			li.add( new CanvasCell(x1, y1) );
+		
+		//Upper neighbour
+		int x2=x;
+		int y2=y-1;
+		
+		if( y2>=1 && grid[y2-1][x2-1] != 'x' && grid[y2-1][x2-1] != color )
+			li.add( new CanvasCell(x2, y2) );
+		
+		//Left neighbour 
+		int x3=x-1;
+		int y3=y;
+		
+		if( x3>=1 && grid[y3-1][x3-1] != 'x' && grid[y3-1][x3-1] != color )
+			li.add( new CanvasCell(x3, y3) );
+		
+		
+		//Right neighbour 
+		int x4=x+1;
+		int y4=y;
+		
+		if( x4<=width && grid[y4-1][x4-1] !='x' && grid[y4-1][x4-1] != color )
+			li.add( new CanvasCell(x4, y4) );
+		
+		
+		return li;
 	}
 	
 	private void executeQuitCommand( CanvasCommand cc ) {
