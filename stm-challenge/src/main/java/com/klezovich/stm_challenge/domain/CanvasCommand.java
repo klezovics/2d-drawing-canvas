@@ -6,8 +6,10 @@ import java.util.regex.Pattern;
 public class CanvasCommand {
 	
 	private static final String createCmdRegExpStr = "C ([0-9]+) ([0-9]+)";
+	private static final String lineCmdRegExpStr = "L ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)";
 	
 	private CanvasCommandType cmdType;
+	private LineType lineType; 
 	private int width;
 	private int height;
 	private int x1;
@@ -17,7 +19,11 @@ public class CanvasCommand {
 	private char c; 
 	
 	public enum CanvasCommandType{
-	  CREATE, LINE, RECTANGE, FILL, QUIT;
+	  CREATE, DRAW_LINE, DRAW_RECTANGLE, FILL, QUIT;
+	}
+	
+	public enum LineType{
+		VERTICAL, HORIZONTAL;
 	}
 	
 	private CanvasCommand(){		
@@ -34,6 +40,41 @@ public class CanvasCommand {
 			c.setCmdType( CanvasCommandType.CREATE );
 			c.setWidth( Integer.parseInt( m.group(1) )  );
 			c.setHeight( Integer.parseInt( m.group(2) ) );
+			return c; 
+		}
+		
+		
+		p = Pattern.compile( lineCmdRegExpStr );
+		m = p.matcher( cmdStr );
+		if( m.matches() ) {
+		    
+			c.setCmdType( CanvasCommandType.DRAW_LINE );
+			
+			int x1 = Integer.parseInt( m.group(1) );
+			int y1 = Integer.parseInt( m.group(2) );
+			int x2 = Integer.parseInt( m.group(3) );
+			int y2 = Integer.parseInt( m.group(4) );
+			
+			if( x1<=0 || x2<=0 || y1 <=0 || y2 <=0 ) {
+				throw new RuntimeException("All line coordinates must be non-negative");
+			}
+			
+			if( x1 == x2 ) {
+				c.setLineType( LineType.VERTICAL );
+			}
+			else if( y1 == y2 ) {
+				c.setLineType( LineType.HORIZONTAL );
+			}
+			else 
+			{
+				throw new RuntimeException("Line must be either vertical (x1=x2) or horizontal (y1=y2)");
+			}
+			
+			c.setX1( x1 );
+			c.setY1( y1 );
+			c.setX2( x2 );
+			c.setY2( y2 );
+			
 			return c; 
 		}
 		
@@ -56,6 +97,15 @@ public class CanvasCommand {
 
 	public void setWidth(int width) {
 		this.width = width;
+	}
+
+	
+	public LineType getLineType() {
+		return lineType;
+	}
+
+	public void setLineType(LineType lineType) {
+		this.lineType = lineType;
 	}
 
 	public int getHeight() {

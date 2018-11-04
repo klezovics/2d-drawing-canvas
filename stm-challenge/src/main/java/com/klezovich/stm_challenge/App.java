@@ -31,7 +31,14 @@ public class App
         		continue;
         	}
         	
-        	c.execute(cc);
+        	
+        	try {
+        	  c.execute(cc);
+        	}catch( Exception e) {
+        	  System.out.println(e);
+        	  continue;
+        	}
+        	
         	c.draw();
         	
         }
