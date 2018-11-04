@@ -1,6 +1,11 @@
 package com.klezovich.stm_challenge.domain;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class CanvasCommand {
+	
+	private static final String createCmdRegExpStr = "C ([0-9]+) ([0-9]+)";
 	
 	private CanvasCommandType cmdType;
 	private int width;
@@ -18,10 +23,23 @@ public class CanvasCommand {
 	private CanvasCommand(){		
 	}
 	
-	static CanvasCommand parseCommandString ( String cmdStr ) {
+	public static CanvasCommand parseCommandString ( String cmdStr ) {
 	
 		CanvasCommand c = new CanvasCommand();
-		return c; 
+		
+		Pattern p = Pattern.compile( createCmdRegExpStr );
+		Matcher m = p.matcher( cmdStr );
+		if( m.matches() ) {
+		    
+			c.setCmdType( CanvasCommandType.CREATE );
+			c.setWidth( Integer.parseInt( m.group(1) )  );
+			c.setHeight( Integer.parseInt( m.group(2) ) );
+			return c; 
+		}
+		
+		throw new RuntimeException("Unknown command:" + cmdStr);
+		
+		
 	}
 
 	public CanvasCommandType getCmdType() {

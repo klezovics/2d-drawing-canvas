@@ -1,11 +1,29 @@
 package com.klezovich.stm_challenge.domain;
 
+import com.klezovich.stm_challenge.domain.CanvasCommand.CanvasCommandType;
+
 public class Canvas {
 
-	int[][] grid; 
+	char[][] grid; 
 	int h; 
 	int w; 
 	
+	
+	public void execute( CanvasCommand cc ) {
+		
+		if( cc.getCmdType() == CanvasCommandType.CREATE ) {
+			executeCreateCommand(cc);
+		}
+		
+	}
+	
+	private void executeCreateCommand( CanvasCommand cc ) {
+		
+		w = cc.getWidth();
+		h = cc.getHeight();
+		grid = new char[h][w];
+		
+	}
 	
 	public void draw() {
 		
@@ -23,13 +41,14 @@ public class Canvas {
 	
 	private void drawCanvasVerticalBorder() {
 		
-		System.out.print("|");
+		System.out.print("-");
 		
 		for( int ii=0; ii<w; ii++ ) {
 		   	System.out.print("-");
 		}
 		
-		System.out.print("|");
+		System.out.println("-");
+		
 	}
 	
 	private void drawCanvasRow(int rowNum ) {
@@ -39,7 +58,7 @@ public class Canvas {
 		   	System.out.print( grid[rowNum][ii]);
 		}
 		
-		System.out.print("|");
+		System.out.print("|\n");
 	}
 	
 	
