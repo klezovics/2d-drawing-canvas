@@ -7,6 +7,8 @@ public class CanvasCommand {
 	
 	private static final String createCmdRegExpStr = "C ([0-9]+) ([0-9]+)";
 	private static final String lineCmdRegExpStr = "L ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)";
+	private static final String rectCmdRegExpStr = "R ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)";
+	private static final String quitCmdRegExpStr = "Q";
 	
 	private CanvasCommandType cmdType;
 	private LineType lineType; 
@@ -78,7 +80,38 @@ public class CanvasCommand {
 			return c; 
 		}
 		
-		throw new RuntimeException("Unknown command:" + cmdStr);
+		p = Pattern.compile( rectCmdRegExpStr );
+		m = p.matcher( cmdStr );
+		if( m.matches() ) {
+		    
+			c.setCmdType( CanvasCommandType.DRAW_RECTANGLE );
+			
+			int x1 = Integer.parseInt( m.group(1) );
+			int y1 = Integer.parseInt( m.group(2) );
+			int x2 = Integer.parseInt( m.group(3) );
+			int y2 = Integer.parseInt( m.group(4) );
+			
+			if( x1<=0 || x2<=0 || y1 <=0 || y2 <=0 ) {
+				throw new RuntimeException("All line coordinates must be non-negative");
+			}
+			
+			c.setX1( x1 );
+			c.setY1( y1 );
+			c.setX2( x2 );
+			c.setY2( y2 );
+			
+			return c; 
+		}
+		
+		
+		p = Pattern.compile( quitCmdRegExpStr );
+		m = p.matcher( cmdStr );
+		if( m.matches() ) {
+			c.setCmdType( CanvasCommandType.QUIT );
+			return c;
+		}
+		
+		throw new RuntimeException("Unknown command:'" + cmdStr +"'");
 		
 		
 	}
