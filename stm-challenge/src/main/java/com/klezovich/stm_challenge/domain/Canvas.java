@@ -1,18 +1,24 @@
 package com.klezovich.stm_challenge.domain;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.klezovich.stm_challenge.domain.CanvasCommand.CanvasCommandType;
-import com.klezovich.stm_challenge.domain.CanvasCommand.LineType;
 
 public class Canvas {
 
-	char[][] grid;
-	int height;
-	int width;
+	private static final String canvasFileStartRegExp = "== Canvas [0-9]+ [0-9]+ ==";
+
+	private char[][] grid;
+	private int height;
+	private int width;
 
 	public void execute(CanvasCommand cc) {
 
@@ -50,6 +56,65 @@ public class Canvas {
 		}
 
 		drawCanvasVerticalBorder();
+	}
+
+	public static Canvas createFromFile(File f) {
+
+		Canvas c = new Canvas();
+
+		Scanner in = null;
+		try {
+			in = new Scanner(f);
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
+
+		boolean canvasStarted = false;
+
+		int h = 0;
+		int w = 0;
+		int curH = 0; 
+		int curW = 0;
+		while (in.hasNextLine()) {
+
+			String line = in.nextLine();
+
+			if (!canvasStarted) {
+
+				Pattern p = Pattern.compile(canvasFileStartRegExp);
+				Matcher m = p.matcher(line);
+				if (m.matches()) {
+
+					w = Integer.parseInt(m.group(1));
+					h = Integer.parseInt(m.group(2));
+					c.height = h;
+					c.width = w;
+					c.grid = new char[h][w];
+					curH = 0;
+					curW = 0;
+					canvasStarted = true;
+				}else {
+					continue;
+				}
+
+				canvasStarted = true;
+			}else {
+				line = in.nextLine().trim();
+				char[] lineArr = line.toCharArray();
+				
+				for(int ii=0; ii<w; ii++ ) {
+					c.grid[curH][ii] = lineArr[ii];
+				}
+				
+				curH++;
+			}
+
+		}
+
+		return c;
+
 	}
 
 	private void colorCell(CanvasCell cc, char color) {
