@@ -62,7 +62,7 @@ public class AppTest extends TestCase {
 	}
 	
 	public void test5by5wrongColorFill() {
-		if (CanvasTester.test(new File(Property.testDir + "canvas 5x5 easy fill")))
+		if (CanvasTester.test(new File(Property.testDir + "canvas 5x5 wrong fill")))
 			fail();
 	}
 
