@@ -33,17 +33,16 @@ public class AppTest
         return new TestSuite( AppTest.class );
     }
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
-    }
+    
     
     public void test3by3gridCreation() {
     	
     	if(!CanvasTester.test( new File( Property.testDir+"canvas 3x3")))
+    		fail();
+    }
+    
+    public void testWrong3by3GridCreation() {
+    	if(CanvasTester.test( new File( Property.testDir+"canvas 3x3 wrong")))
     		fail();
     }
     
