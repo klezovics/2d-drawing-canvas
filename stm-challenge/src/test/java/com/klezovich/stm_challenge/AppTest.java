@@ -10,6 +10,9 @@ import junit.framework.TestSuite;
 public class AppTest 
     extends TestCase
 {
+	
+	private static final String testDir = "resources\\canvas test files\\";
+	
     /**
      * Create the test case
      *
