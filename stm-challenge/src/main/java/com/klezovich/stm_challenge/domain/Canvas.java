@@ -1,5 +1,6 @@
 package com.klezovich.stm_challenge.domain;
 
+import java.awt.HeadlessException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
@@ -14,7 +15,7 @@ import com.klezovich.stm_challenge.domain.CanvasCommand.CanvasCommandType;
 
 public class Canvas {
 
-	private static final String canvasFileStartRegExp = "== Canvas [0-9]+ [0-9]+ ==";
+	private static final String canvasFileStartRegExp = "== Canvas ([0-9]+) ([0-9]+) ==";
 
 	private char[][] grid;
 	private int height;
@@ -58,6 +59,99 @@ public class Canvas {
 		drawCanvasVerticalBorder();
 	}
 
+	public static Canvas createFromFile(File f) {
+	
+		Canvas c = new Canvas();
+	
+		int canvasStartLineNum = findCanvasStartLineNumInFile(f);
+		if( canvasStartLineNum == 0 )
+			return null;
+		
+		Scanner in;
+		try {
+			in = new Scanner(f);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+	
+		in = skipFirstNLines(in, canvasStartLineNum - 1);
+	
+		String line = in.nextLine().trim();
+		Pattern p = Pattern.compile(canvasFileStartRegExp);
+		Matcher m = p.matcher(line);
+	
+		System.out.println(line);
+		int h = 0;
+		int w = 0;
+		if (m.matches()) {
+			w = Integer.parseInt(m.group(1));
+			h = Integer.parseInt(m.group(2));
+		} else {
+			return null;
+		}
+	
+		c.height = h;
+		c.width = w;
+		c.grid = new char[h][w];
+	
+		// Skipping the top vertical line
+		in.nextLine();
+		
+		int curCanvasDrawingLine = 1;
+		while (in.hasNextLine()) {
+			
+			line = in.nextLine().trim();
+			if( curCanvasDrawingLine > h )
+				break;
+			 
+			line = line.substring( 1, line.length() );
+			char[] lineArr = line.toCharArray();
+	
+			for (int ii = 0; ii < w; ii++) {
+				c.grid[curCanvasDrawingLine-1][ii] = lineArr[ii];
+			}
+			
+			curCanvasDrawingLine++;
+		}
+	
+		return c;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+	
+		if (o == this) {
+			return true;
+		}
+	
+		if (!(o instanceof Canvas)) {
+			return false;
+		}
+	
+		Canvas c = (Canvas) o;
+	
+		int otherHeight = c.height;
+		if (otherHeight != this.height)
+			return false;
+	
+		int otherWidth = c.width;
+		if (otherWidth != this.width)
+			return false;
+	
+		char[][] otherGrid = c.grid;
+		for (int ii = 0; ii < this.height; ii++) {
+			for (int jj = 0; jj < this.width; jj++) {
+	
+				if (this.grid[ii][jj] != otherGrid[ii][jj])
+					return false;
+	
+			}
+		}
+	
+		return true;
+	}
+
 	private static int findCanvasStartLineNumInFile(File f) {
 
 		Scanner in = null;
@@ -94,55 +188,6 @@ public class Canvas {
 			curLineNum++;
 		}
 		return s;
-	}
-
-	public static Canvas createFromFile(File f) {
-
-		Canvas c = new Canvas();
-
-		int canvasStartLineNum = findCanvasStartLineNumInFile(f);
-		if( canvasStartLineNum == 0 )
-			return null;
-		
-		Scanner in;
-		try {
-			in = new Scanner(f);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			return null;
-		}
-
-		in = skipFirstNLines(in, canvasStartLineNum - 1);
-
-		String line = in.nextLine().trim();
-		Pattern p = Pattern.compile(canvasFileStartRegExp);
-		Matcher m = p.matcher(line);
-
-		int h = 0;
-		int w = 0;
-		if (m.matches()) {
-			w = Integer.parseInt(m.group(1));
-			h = Integer.parseInt(m.group(2));
-		} else {
-			return null;
-		}
-
-		c.height = h;
-		c.width = w;
-		c.grid = new char[h][w];
-
-		int curH = 0;
-		while (in.hasNextLine()) {
-			
-			line = in.nextLine().trim();
-			char[] lineArr = line.toCharArray();
-
-			for (int ii = 0; ii < w; ii++) {
-				c.grid[curH][ii] = lineArr[ii];
-			}
-		}
-
-		return c;
 	}
 
 	private void colorCell(CanvasCell cc, char color) {
@@ -317,41 +362,10 @@ public class Canvas {
 		System.out.print("|\n");
 	}
 
-	@Override
-	public boolean equals(Object o) {
-
-		if (o == this) {
-			return true;
-		}
-
-		if (!(o instanceof Canvas)) {
-			return false;
-		}
-
-		Canvas c = (Canvas) o;
-
-		int otherHeight = c.height;
-		if (otherHeight != this.height)
-			return false;
-
-		int otherWidth = c.width;
-		if (otherWidth != this.width)
-			return false;
-
-		char[][] otherGrid = c.grid;
-		for (int ii = 0; ii < this.height; ii++) {
-			for (int jj = 0; jj < this.width; jj++) {
-
-				if (this.grid[ii][jj] != otherGrid[ii][jj])
-					return false;
-
-			}
-		}
-
-		return true;
-	}
-
 	public static void main(String[] args) {
        
+		File f = new File("resources\\canvas test files\\canvas_test_file_1");
+		Canvas c = Canvas.createFromFile(f);
+		c.draw();
 	}
 }
