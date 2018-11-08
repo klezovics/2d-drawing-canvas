@@ -243,8 +243,8 @@ public class Canvas {
 			List<CanvasCell> lc = getNeighbourCells(curCel, color);
 			q.addAll(lc);
 			colorCell(curCel, color);
-			System.out.println("Coloring:" + curCel.getX() + " " + curCel.getY());
-			this.draw();
+			//System.out.println("Coloring:" + curCel.getX() + " " + curCel.getY());
+			//this.draw();
 		}
 
 	}
