@@ -21,6 +21,26 @@ public class CanvasCommand {
 	private int y2; 
 	private char color; 
 	
+	public String toString() {
+		
+		String str = cmdType.toString();
+		
+		if( cmdType == CanvasCommandType.CREATE )
+			return str+" "+width+" "+height;
+		
+		if( cmdType == CanvasCommandType.DRAW_LINE )
+			return str+" "+x1+" "+y1+" "+x2+" "+y2;
+		
+		if( cmdType == CanvasCommandType.DRAW_RECTANGLE )
+			return str+" "+x1+" "+y1+" "+x2+" "+y2;
+		
+		if( cmdType == CanvasCommandType.FILL )
+			return str+" "+x1+" "+y1+" "+color;
+		
+		
+		return str;
+	}
+	
 	public enum CanvasCommandType{
 	  CREATE, DRAW_LINE, DRAW_RECTANGLE, FILL, QUIT;
 	}
