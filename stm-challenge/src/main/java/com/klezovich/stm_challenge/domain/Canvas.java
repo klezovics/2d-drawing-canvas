@@ -104,7 +104,7 @@ public class Canvas {
 		Pattern p = Pattern.compile(canvasFileStartRegExp);
 		Matcher m = p.matcher(line);
 
-		System.out.println(line);
+		//System.out.println(line);
 		int h = 0;
 		int w = 0;
 		if (m.matches()) {
