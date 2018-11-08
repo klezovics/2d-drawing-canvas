@@ -58,9 +58,7 @@ public class Canvas {
 		drawCanvasVerticalBorder();
 	}
 
-	public static Canvas createFromFile(File f) {
-
-		Canvas c = new Canvas();
+	private static int findCanvasStartLineNumInFile(File f) {
 
 		Scanner in = null;
 		try {
@@ -68,53 +66,83 @@ public class Canvas {
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			return null;
+			return 0;
 		}
 
-		boolean canvasStarted = false;
-
-		int h = 0;
-		int w = 0;
-		int curH = 0; 
-		int curW = 0;
+		int lineNum = 0;
 		while (in.hasNextLine()) {
 
 			String line = in.nextLine();
+			lineNum++;
 
-			if (!canvasStarted) {
-
-				Pattern p = Pattern.compile(canvasFileStartRegExp);
-				Matcher m = p.matcher(line);
-				if (m.matches()) {
-
-					w = Integer.parseInt(m.group(1));
-					h = Integer.parseInt(m.group(2));
-					c.height = h;
-					c.width = w;
-					c.grid = new char[h][w];
-					curH = 0;
-					curW = 0;
-					canvasStarted = true;
-				}else {
-					continue;
-				}
-
-				canvasStarted = true;
-			}else {
-				line = in.nextLine().trim();
-				char[] lineArr = line.toCharArray();
-				
-				for(int ii=0; ii<w; ii++ ) {
-					c.grid[curH][ii] = lineArr[ii];
-				}
-				
-				curH++;
+			Pattern p = Pattern.compile(canvasFileStartRegExp);
+			Matcher m = p.matcher(line);
+			if (m.matches()) {
+				return lineNum;
 			}
+		}
 
+		return 0;
+
+	}
+
+	private static Scanner skipFirstNLines(Scanner s, int linesToSkip) {
+		int curLineNum = 1;
+		String line = null;
+		while (curLineNum <= linesToSkip) {
+			s.nextLine();
+			curLineNum++;
+		}
+		return s;
+	}
+
+	public static Canvas createFromFile(File f) {
+
+		Canvas c = new Canvas();
+
+		int canvasStartLineNum = findCanvasStartLineNumInFile(f);
+		if( canvasStartLineNum == 0 )
+			return null;
+		
+		Scanner in;
+		try {
+			in = new Scanner(f);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		}
+
+		in = skipFirstNLines(in, canvasStartLineNum - 1);
+
+		String line = in.nextLine().trim();
+		Pattern p = Pattern.compile(canvasFileStartRegExp);
+		Matcher m = p.matcher(line);
+
+		int h = 0;
+		int w = 0;
+		if (m.matches()) {
+			w = Integer.parseInt(m.group(1));
+			h = Integer.parseInt(m.group(2));
+		} else {
+			return null;
+		}
+
+		c.height = h;
+		c.width = w;
+		c.grid = new char[h][w];
+
+		int curH = 0;
+		while (in.hasNextLine()) {
+			
+			line = in.nextLine().trim();
+			char[] lineArr = line.toCharArray();
+
+			for (int ii = 0; ii < w; ii++) {
+				c.grid[curH][ii] = lineArr[ii];
+			}
 		}
 
 		return c;
-
 	}
 
 	private void colorCell(CanvasCell cc, char color) {
@@ -324,6 +352,6 @@ public class Canvas {
 	}
 
 	public static void main(String[] args) {
-
+       
 	}
 }
