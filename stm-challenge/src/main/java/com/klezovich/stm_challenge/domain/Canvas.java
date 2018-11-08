@@ -82,7 +82,7 @@ public class Canvas {
 		return li;
 	}
 
-	public static Canvas createFromFile(File f) {
+	public static Canvas readFromFile(File f) {
 
 		Canvas c = new Canvas();
 
@@ -132,7 +132,14 @@ public class Canvas {
 			char[] lineArr = line.toCharArray();
 
 			for (int ii = 0; ii < w; ii++) {
-				c.grid[curCanvasDrawingLine - 1][ii] = lineArr[ii];
+				 char ch= lineArr[ii];
+				 
+				 // Whitespaces are replaced by zeroes 
+				 // to match the contents of the grid in Canvas created with commands
+				 if((int) ch == 32 )
+					 ch=0;
+				 
+				 c.grid[curCanvasDrawingLine - 1][ii] = ch;
 			}
 
 			curCanvasDrawingLine++;
@@ -394,7 +401,7 @@ public class Canvas {
 			System.out.println(c);
 		}
 		
-		Canvas c = Canvas.createFromFile(f);
+		Canvas c = Canvas.readFromFile(f);
 		c.draw();
 	}
 }

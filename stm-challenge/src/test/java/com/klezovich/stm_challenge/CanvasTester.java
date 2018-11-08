@@ -8,9 +8,9 @@ import com.klezovich.stm_challenge.domain.CanvasCommand;
 
 public class CanvasTester {
 
-	public boolean test( File f ) {
+	public static boolean test( File f ) {
 		
-		Canvas cFromFile = Canvas.createFromFile(f);
+		Canvas cFromFile = Canvas.readFromFile(f);
 		List<CanvasCommand> cLi = Canvas.parseCommandListFromFile(f);		
 		Canvas cFromCmd = new Canvas();	
 		
@@ -23,5 +23,9 @@ public class CanvasTester {
 		
 		return false;
 		
+	}
+	
+	public static void main(String[] args) {
+	  System.out.println(CanvasTester.test( new File( Property.testDir+"canvas 3x3")));
 	}
 }

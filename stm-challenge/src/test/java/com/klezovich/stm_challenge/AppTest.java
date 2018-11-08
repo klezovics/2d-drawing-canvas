@@ -1,5 +1,7 @@
 package com.klezovich.stm_challenge;
 
+import java.io.File;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -11,7 +13,7 @@ public class AppTest
     extends TestCase
 {
 	
-	private static final String testDir = "resources\\canvas test files\\";
+	
 	
     /**
      * Create the test case
@@ -38,4 +40,11 @@ public class AppTest
     {
         assertTrue( true );
     }
+    
+    public void test3by3gridCreation() {
+    	
+    	if(!CanvasTester.test( new File( Property.testDir+"canvas 3x3")))
+    		fail();
+    }
+    
 }
