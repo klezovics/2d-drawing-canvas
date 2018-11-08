@@ -21,7 +21,7 @@ public class App
     	
         while(true) {
         	
-        	String cmdStr = in.nextLine();
+        	String cmdStr = in.nextLine().trim();
         	cmdStr.trim();
         	//System.out.println(cmdStr);
         	
