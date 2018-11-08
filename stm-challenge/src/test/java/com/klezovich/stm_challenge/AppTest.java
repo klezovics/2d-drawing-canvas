@@ -70,5 +70,10 @@ public class AppTest extends TestCase {
 		if (!CanvasTester.test(new File(Property.testDir + "canvas 5x5 easy rectangle")))
 			fail();
 	}
+	
+	public void test5by5wrongEasyRectangle() {
+		if (CanvasTester.test(new File(Property.testDir + "canvas 5x5 wrong easy rectangle")))
+			fail();
+	}
 
 }
