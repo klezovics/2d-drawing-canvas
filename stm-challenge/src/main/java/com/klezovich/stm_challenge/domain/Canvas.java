@@ -23,22 +23,37 @@ public class Canvas {
 	public void execute(CanvasCommand cc) {
 
 		if (cc.getCmdType() == CanvasCommandType.CREATE) {
+
 			executeCreateCommand(cc);
 		}
 
 		if (cc.getCmdType() == CanvasCommandType.DRAW_LINE) {
+
+			if (grid == null)
+				throw new RuntimeException("No active grid. Please create grid using the CREATE (C) command");
+
 			executeDrawLineCommand(cc);
 		}
 
 		if (cc.getCmdType() == CanvasCommandType.DRAW_RECTANGLE) {
+
+			if (grid == null)
+				throw new RuntimeException("No active grid. Please create grid using the CREATE (C) command");
+
 			executeDrawRectangleCommand(cc);
 		}
 
 		if (cc.getCmdType() == CanvasCommandType.FILL) {
+			if (grid == null)
+				throw new RuntimeException("No active grid. Please create grid using the CREATE (C) command");
+
 			executeFillCommand(cc);
 		}
 
 		if (cc.getCmdType() == CanvasCommandType.QUIT) {
+			if (grid == null)
+				throw new RuntimeException("No active grid. Please create grid using the CREATE (C) command");
+
 			executeQuitCommand(cc);
 		}
 
@@ -68,13 +83,13 @@ public class Canvas {
 			e.printStackTrace();
 			return null;
 		}
-		
-		while( in.hasNextLine() ) {
+
+		while (in.hasNextLine()) {
 			String line = in.nextLine();
-			if( line.matches(canvasFileStartRegExp) ) {
+			if (line.matches(canvasFileStartRegExp)) {
 				break;
 			}
-			
+
 			CanvasCommand cmd = CanvasCommand.parseCommandString(line);
 			li.add(cmd);
 		}
@@ -104,7 +119,7 @@ public class Canvas {
 		Pattern p = Pattern.compile(canvasFileStartRegExp);
 		Matcher m = p.matcher(line);
 
-		//System.out.println(line);
+		// System.out.println(line);
 		int h = 0;
 		int w = 0;
 		if (m.matches()) {
@@ -132,14 +147,14 @@ public class Canvas {
 			char[] lineArr = line.toCharArray();
 
 			for (int ii = 0; ii < w; ii++) {
-				 char ch= lineArr[ii];
-				 
-				 // Whitespaces are replaced by zeroes 
-				 // to match the contents of the grid in Canvas created with commands
-				 if((int) ch == 32 )
-					 ch=0;
-				 
-				 c.grid[curCanvasDrawingLine - 1][ii] = ch;
+				char ch = lineArr[ii];
+
+				// Whitespaces are replaced by zeroes
+				// to match the contents of the grid in Canvas created with commands
+				if ((int) ch == 32)
+					ch = 0;
+
+				c.grid[curCanvasDrawingLine - 1][ii] = ch;
 			}
 
 			curCanvasDrawingLine++;
@@ -233,6 +248,11 @@ public class Canvas {
 		if (!coordinatesFitInCanvas(cc))
 			throw new RuntimeException("The supplied coordinate is outside of the current canvas");
 
+		if (grid[y-1][x-1] == 'x') {
+			//grid[y-1][x-1] = color;
+			return;
+		}
+
 		CanvasCell c = new CanvasCell(x, y);
 		Queue<CanvasCell> q = new LinkedList<CanvasCell>();
 		q.add(c);
@@ -243,8 +263,8 @@ public class Canvas {
 			List<CanvasCell> lc = getNeighbourCells(curCel, color);
 			q.addAll(lc);
 			colorCell(curCel, color);
-			//System.out.println("Coloring:" + curCel.getX() + " " + curCel.getY());
-			//this.draw();
+			// System.out.println("Coloring:" + curCel.getX() + " " + curCel.getY());
+			// this.draw();
 		}
 
 	}
@@ -386,7 +406,12 @@ public class Canvas {
 		System.out.print("|");
 
 		for (int ii = 0; ii < width; ii++) {
-			System.out.print(grid[rowNum][ii]);
+			char printChar = grid[rowNum][ii];
+
+			if (printChar == 0)
+				printChar = ' ';
+
+			System.out.print(printChar);
 		}
 
 		System.out.print("|\n");
@@ -396,11 +421,11 @@ public class Canvas {
 
 		File f = new File("resources\\canvas test files\\canvas_test_file_2");
 		List<CanvasCommand> cLi = parseCommandListFromFile(f);
-		
-		for(CanvasCommand c : cLi ) {
+
+		for (CanvasCommand c : cLi) {
 			System.out.println(c);
 		}
-		
+
 		Canvas c = Canvas.readFromFile(f);
 		c.draw();
 	}

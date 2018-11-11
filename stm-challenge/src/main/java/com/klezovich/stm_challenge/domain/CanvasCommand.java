@@ -127,7 +127,7 @@ public class CanvasCommand {
 			int y2 = Integer.parseInt( m.group(4) );
 			
 			if( x1<=0 || x2<=0 || y1 <=0 || y2 <=0 ) {
-				throw new RuntimeException("All line coordinates must be non-negative");
+				throw new RuntimeException("All rectangle coordinates must be positive");
 			}
 			
 			c.setX1( x1 );
