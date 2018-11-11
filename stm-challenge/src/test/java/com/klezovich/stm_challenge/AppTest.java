@@ -37,6 +37,11 @@ public class AppTest extends TestCase {
 		if (!CanvasTester.test(new File(Property.testDir + "canvas 3x5")))
 			fail();
 	}
+	
+	public void test5by3gridCreation() {
+		if (!CanvasTester.test(new File(Property.testDir + "canvas 3x5")))
+			fail();
+	}
 
 	public void testWrong3by3GridCreation() {
 		if (CanvasTester.test(new File(Property.testDir + "canvas 3x3 wrong")))
