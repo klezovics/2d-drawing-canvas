@@ -2,11 +2,11 @@ This is a solution for the Springer Nature Code Challenge.
 
 The URL of the repository is the following - https://github.com/SNDigitalBerlinCodingChallenge/stm_challenge_arthur_klezovich/tree/Arturs-Klezovics-Branch
 
-TABLE OF CONTENTS:
+=================    TABLE OF CONTENTS   ====================
 1. How to RUN the project 
 2. Project architecture
 3. Discussion of automated testing
-
+4. Discussion of the edge cases
 
 
 === 1. How to RUN the project === 
@@ -100,3 +100,58 @@ In most of the tests they match, but in some tests the drawing is intentionally 
 from the the command output ( for example see the "canvas 3x3 wrong" file ) to test that 
 the CanvasTester.test() method will correctly return "false"
 
+
+
+=== 4. Discussion of the edge cases === 
+
+The edge cases will be discussed on a per-comand basis:
+
+4.1 Quit command 
+There are no edge-cases here, because internally a call to 'System.exit(0)' is made. 
+
+4.2 Create command 
+  4.2.1 'C 0 0'   -> the program will not allow to do this and will display an error message
+  4.2.2 'C -1 1'  -> the program will not allow to do this and will display an error message
+  4.2.3 'C 1 -1'  -> the program will not allow to do this and will display an error message
+  4.2.4 'C -1 -1' -> the program will not allow to do this and will display an error message
+  4.2.5 'C 0 1'   -> the program will not allow to do this and will display an error message
+  4.2.6 'C 1 0'   -> the program will not allow to do this and will display an error message
+  4.2.7 'C 1 1'   -> OK 
+  4.2.8 'C 1 2'   -> OK 
+  4.2.9 'C 2 2'   -> OK 
+  4.2.10 'C 100 100' -> OK 
+  4.2.11 'C 200 200' -> an error will be displayed value of maxCanvasDim exceeded
+
+  An in general the canvas command parser is written in such a way that it requres that 
+  both coordinates be non-negative and lower than some reasonable limit (maxCanvasDim static field in the CanvasCommand class)
+  
+  
+4.3 Draw line command 
+
+  The "Draw Line" command coordinates are validated to ensure that they 
+  are non-negative, fit within the canvas and the line is either vertical or horizontal.
+
+  4.3.1 L 0 0 0 0 -> an error will be displayed 
+  4.3.2 L 0 1 0 1 -> an error will be displayed
+  4.3.3 L 1 0 1 0  -> an error will be displayed
+  4.3.4 L -1 -1 1 1  -> an error will be displayed
+   
+  4.3.5 A line with one point outside of the canvas 
+    C 3 3 
+    L 1 1 1 5 ->  An error message will be displayed
+   
+  4.3.6 A line with both points outside of the canvas
+    C 5 10 
+    L 20 20 20 30 ->  An error message will be displayed
+    
+  4.3.7 A line where both points are the same 
+    C 3 3 
+    L 1 1 1 1 -> this is OK, a single "pixel" will have an 'x' in it
+  
+  4.3.8 A line which is neither horizontal nor vertical 
+    C 5 5 
+    L 1 2 3 4 -> an error message will be displayed saying that line is neither horizontal 
+    nor vertical
+
+4.4 Draw rectangle command 
+4.5 Bucket fill command   
