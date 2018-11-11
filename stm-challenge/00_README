@@ -2,6 +2,16 @@ This is a solution for the Springer Nature Code Challenge.
 
 The URL of the repository is the following - https://github.com/SNDigitalBerlinCodingChallenge/stm_challenge_arthur_klezovich/tree/Arturs-Klezovics-Branch
 
+When reading the code please be aware that for the user the canvas cell addressing 
+starts with 1 and is done in the (x,y) form, however, the backing datastructure 
+a 2D array called grid (member of the object of the Canvas class ) is adressed starting 
+from 0 and is done in the grid[y-1][x-1] form for a (x,y) coordinate provided of the user.
+
+Following the clean code methodology minimal comments are provided (to not convolute the code) 
+and the clarity of the code is obtained by suitably naming variables, routines and providing 
+a nice break-down of the problem into classes and their methods. 
+
+
 =================    TABLE OF CONTENTS   ====================
 1. How to RUN the project 
 2. Project architecture
@@ -110,6 +120,9 @@ The edge cases will be discussed on a per-comand basis:
 There are no edge-cases here, because internally a call to 'System.exit(0)' is made. 
 
 4.2 Create command 
+  
+  Below a command, which simulates an edge case is shown along with the excepted output.
+
   4.2.1 'C 0 0'   -> the program will not allow to do this and will display an error message
   4.2.2 'C -1 1'  -> the program will not allow to do this and will display an error message
   4.2.3 'C 1 -1'  -> the program will not allow to do this and will display an error message
@@ -127,6 +140,8 @@ There are no edge-cases here, because internally a call to 'System.exit(0)' is m
   
   
 4.3 Draw line command 
+
+  Below a sequence of commands, which simulates an edge case is shown along with the excepted output.
 
   The "Draw Line" command coordinates are validated to ensure that they 
   are non-negative, fit within the canvas and the line is either vertical or horizontal.
@@ -154,4 +169,207 @@ There are no edge-cases here, because internally a call to 'System.exit(0)' is m
     nor vertical
 
 4.4 Draw rectangle command 
+   
+   4.4.1 R 0 0 0 0 -> an error will be displayed
+   4.4.2 R 0 1 0 1 -> an error will be displayed
+   4.4.3 R 1 0 1 0 -> an error will be displayed 
+   4.4.4 R -1 -1 1 1 -> an error will be displayed
+   
+   An in general input validation is done to ensure that each rectangle 
+   coordinate is positive.
+   
+   4.3.5 A rectangle with one point outside of the canvas 
+    C 3 3 
+    R 1 1 1 5 ->  An error message will be displayed
+   
+  4.3.6 A rectangle with both points outside of the canvas
+    C 5 10 
+    R 20 20 20 30 ->  An error message will be displayed
+    
+  4.3.7 A rectangle where both points are the same 
+    C 3 3 
+    R 1 1 1 1 -> this is OK, a single "pixel" will have an 'x' in it
+  
+ 
 4.5 Bucket fill command   
+
+The simplest possible uses of the fill command are the following along with their outputs ...
+
+Commands:
+C 3 3 
+B 1 1 c
+
+Result:
+-----
+|ccc|
+|ccc|
+|ccc|
+-----
+
+
+
+Commands:
+C 3 3 
+L 2 1 2 3
+B 1 1 c
+
+Result:
+-----
+|cx |
+|cx |
+|cx |
+-----
+
+
+
+
+Commands:
+C 6 6 
+R 3 3 5 5 
+B 4 4 a
+
+Output:
+--------
+|      |
+|      |
+|  xxx |
+|  xax |
+|  xxx |
+|      |
+--------
+
+
+
+Commands:
+C 10 10 
+R 2 2 9 9 
+R 4 4 6 6 
+B 3 3 c
+
+Output:
+------------
+|          |
+| xxxxxxxx |
+| xccccccx |
+| xcxxxccx |
+| xcx xccx |
+| xcxxxccx |
+| xccccccx |
+| xccccccx |
+| xxxxxxxx |
+|          |
+------------
+
+Commands:
+C 10 10 
+L 2 1 2 10
+R 4 4 9 9 
+B 3 10 c
+
+Output: 
+------------
+| xcccccccc|
+| xcccccccc|
+| xcccccccc|
+| xcxxxxxxc|
+| xcx    xc|
+| xcx    xc|
+| xcx    xc|
+| xcx    xc|
+| xcxxxxxxc|
+| xcccccccc|
+------------
+
+These are the simple cases, where we have a good intuitive understanding of what must happen.
+Let's look at cases, which seem a bit more sophisticated.
+
+The first question which comes to mind is what do we do if a bucket-fill command is executed 
+over a point, which has an 'x' in it. 
+
+In my view - NOTHING needs to be done, otherwise, it will break the geometry of the drawing.
+
+Let's see why ...
+
+When a request is made to use a bucket fill tool on a cell, which contains an 'x' there is one 
+of the two things that we can do ... 
+
+A1. Fill this cell with this color 'c' and 
+  A1.1 Do NOT try to fill its neighbours and their neighbours (expand the fill)
+  A1.2 Try to "expand the fill" 
+  
+A2. Not fill this cell with the color 'c' 
+  A2.1 Try to "expand the fill"  
+  A2.2 Not try to "expand the fill"
+  
+  
+If we look at A1.1 the following scenario comes to mind 
+C 3 3 
+L 2 1 2 3
+B 2 1 c 
+
+-----
+| c |
+| x |
+| x |
+-----
+
+However, if we we then do ... 
+B 1 1 f
+
+We get ...
+-----
+|fff|
+|fxf|
+|fxf|
+-----
+
+The geometry is broken ! The fill was able to get to the both sides of the line
+Therefore A1.1 is not a good option, and so is A1.2, because they both "break the geomerty"
+by forming a gap in the line. 
+
+If we then turn to A2.1 this creates an even bigger problem 
+C 3 3
+L 2 1 2 3
+B 1 1 c 
+
+And then we will paint both sides of the line (L 2 1 2 3) withou changing it. Bad idea.
+
+Therefore, A2.2 was chosen as the desired implementation.
+
+This makes sense, because the bucket fill command should be applied to open connected areas on the canvas, 
+it just that we define a connected area by specifying a point in it in the command. However, a point 
+on the line is not part of any open connected area on the grid.
+
+The next edge case we need to consider is the following 
+
+Commands:
+C 5 5 
+L 5 1 3 5
+L 5 1 5 3
+L 5 3 1 3
+L 1 3 1 2
+B 2 2 c
+
+Output:
+-------
+| xxxx|
+|xcccx|
+|xxxxx|
+|     |
+|     |
+-------
+
+The question here is should the bucket fill, which must obviously fill the inside 
+of the rectangle be able to "slip out" through the top-left corner, which is missing. 
+
+I've decided that NO, and this is why in the getNeighbourCells() private method of the 
+"Canvas" class only the 4 neighbours are search (left, right, top, bottom, but not top left).
+This simulates the case where we draw a rectangle in say MsPaint and then remove exactly one 
+pixel on the edge. In my view - the bucket fill should not fill everything. This is because
+It is still boun by the top and left vertical lines
+
+However, it is easy to alter the implementation by changing exactly one method.
+
+
+
+
