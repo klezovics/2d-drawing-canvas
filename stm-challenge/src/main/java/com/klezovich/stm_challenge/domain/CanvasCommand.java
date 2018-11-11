@@ -5,11 +5,13 @@ import java.util.regex.Pattern;
 
 public class CanvasCommand {
 	
-	private static final String createCmdRegExpStr = "C ([0-9]+) ([0-9]+)";
-	private static final String lineCmdRegExpStr = "L ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)";
-	private static final String rectCmdRegExpStr = "R ([0-9]+) ([0-9]+) ([0-9]+) ([0-9]+)";
-	private static final String fillCmdRegExpStr = "B ([0-9]+) ([0-9]+) ([a-z])";
+	private static final String createCmdRegExpStr = "C (-?[0-9]+) (-?[0-9]+)";
+	private static final String lineCmdRegExpStr = "L (-?[0-9]+) (-?[0-9]+) (-?[0-9]+) (-?[0-9]+)";
+	private static final String rectCmdRegExpStr = "R (-?[0-9]+) (-?[0-9]+) (-?[0-9]+) (-?[0-9]+)";
+	private static final String fillCmdRegExpStr = "B (-?[0-9]+) (-?[0-9]+) ([a-z])";
 	private static final String quitCmdRegExpStr = "Q";
+	private static final int maxCanvasDim = 100;
+	
 	
 	private CanvasCommandType cmdType;
 	private LineType lineType; 
@@ -60,9 +62,21 @@ public class CanvasCommand {
 		Matcher m = p.matcher( cmdStr );
 		if( m.matches() ) {
 		    
+			int w=Integer.parseInt( m.group(1) ) ;
+			int h=Integer.parseInt( m.group(2) );
+			 
+			
+			if( w<=0 || h<= 0) {
+				throw new RuntimeException("Both canvas dimensions must be positive");
+			}
+			
+			if( w>maxCanvasDim || h>maxCanvasDim) {
+				throw new RuntimeException("Each canvas dimension can be no more than " + maxCanvasDim );
+			}
+			
 			c.setCmdType( CanvasCommandType.CREATE );
-			c.setWidth( Integer.parseInt( m.group(1) )  );
-			c.setHeight( Integer.parseInt( m.group(2) ) );
+			c.setWidth( w );
+			c.setHeight( h );
 			return c; 
 		}
 		

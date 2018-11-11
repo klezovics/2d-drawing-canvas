@@ -28,7 +28,7 @@ public class App
         	try {
                cc = CanvasCommand.parseCommandString(cmdStr);		
         	}catch( Exception e) {
-        		System.out.println(e);
+        		System.out.println(e.getMessage());
         		continue;
         	}
         	
@@ -36,7 +36,7 @@ public class App
         	try {
         	  c.execute(cc);
         	}catch( Exception e) {
-        	  System.out.println(e);
+        	  System.out.println(e.getMessage());
         	  continue;
         	}
         	
