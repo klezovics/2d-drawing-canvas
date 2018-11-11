@@ -27,6 +27,12 @@ public class AppTest extends TestCase {
 		return new TestSuite(AppTest.class);
 	}
 
+	public void test1by1gridCreation() {
+
+		if (!CanvasTester.test(new File(Property.testDir + "canvas 1x1")))
+			fail();
+	}
+	
 	public void test3by3gridCreation() {
 
 		if (!CanvasTester.test(new File(Property.testDir + "canvas 3x3")))
@@ -39,7 +45,7 @@ public class AppTest extends TestCase {
 	}
 	
 	public void test5by3gridCreation() {
-		if (!CanvasTester.test(new File(Property.testDir + "canvas 3x5")))
+		if (!CanvasTester.test(new File(Property.testDir + "canvas 5x3")))
 			fail();
 	}
 
