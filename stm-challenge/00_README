@@ -1,0 +1,102 @@
+This is a solution for the Springer Nature Code Challenge.
+
+The URL of the repository is the following - https://github.com/SNDigitalBerlinCodingChallenge/stm_challenge_arthur_klezovich/tree/Arturs-Klezovics-Branch
+
+TABLE OF CONTENTS:
+1. How to RUN the project 
+2. Project architecture
+3. Discussion of automated testing
+
+
+
+=== 1. How to RUN the project === 
+
+In order to run the project the following needs to be done ... 
+
+1. Import it into your IDE ( such as Eclipse ) from Git
+2. Run the "App.java" class from "com.klezovich.stm_challenge" package
+3. The main method of this class will start the drawing program. 
+
+
+
+=== 2. Project architecture === 
+
+The main method of the application is the main method in "App.java" class from 
+the "com.klezovich.stm_challenge" package. 
+
+When it starts it creates an instance of the "Canvas" class ( can be found in the "com.klezovich.stm_challenge.domain" )
+package. The canvas class encapsulates the functionality needed to solve this problem.
+
+User input is parsed, validated an encapsulated into an object of the "CanvasCommand" class.
+Then this "CanvasCommand" object is passed on to an instance of a "Canvas" class .execute( CanvasCommand cc ) method. 
+Input validation is done in the "CanvasCommand" class .parseCommandString( String s ) method 
+and an exception will be thrown if something is wrong (for example the line is neither horizontal nor vertical ). 
+
+
+Once the command is executed a .draw() method is called on the "Canvas" object. This 
+will print the output to the command line.
+
+
+Now, internally, a canvas is just a 2D array of chracters. This is the natural representation 
+of the canvas objects. Each cell in an array is defined by (x,y) coordinate pair and can 
+store one character ( 'x' if a line has been drawn through this cell or 'c' if a bucket fill command has 
+been used).
+
+The execution of each command is done by a separate method as can be seen in the 
+.execute() method of the canvas object. 
+
+The implementation for them is rather simple - they just fill in the cells 
+of the 2D array using a relevant loop (please see the relevant method), except for the "Bucket Fill (B)" command.
+
+The bucket fill command does a "bredth-first" search around the target canvas cell ( supplid as the argument 
+to the "Bucket Fill" command ). The 4 cells (upper, lower, left and right) around the target 
+cell are added to the queue if they exist (for example cell (1,1) does not have a left neighbour ) and do not contain a part of a line or a rectangle. The target
+cell is colored.
+
+After this the cells are popped out for the queue, their neighbours are added ( if they meet the criteria ) of course 
+and they are colored. This process is repeated until the queue is empty. 
+
+
+ 
+=== 3. Discussion of automated testing === 
+
+All automated tests are located in the "/stm-challenge/src/test/java/com/klezovich/stm_challenge/AppTest.java" class.
+To run automated test - select this class and select "Run as JUnit Test"
+
+If you look inside you will see that a "CanvasTester" class is used to test them.
+
+The "CanvasTester" has a single static method .test(File f) which takes in a file 
+of a special format. All such files with automated tests are stored in the "/resources/canvas test files/" directory.
+
+The file has the following format:
+1. List of command to execute
+2. How the resulting canvas should look like
+
+Here is an example of such file 
+
+== FILE BEGIN == 
+C 5 5
+L 1 1 2 1
+== Canvas 5 5 ==
+-------
+|xx   |
+|     |
+|     |
+|     |
+|     |
+-------
+== END OF FILE ==
+
+What happens during the test is the following:
+
+1. A canvas object "canvas1" is created 
+2. Command from the top of the file are parse out 
+3. Commands are executed on "canvas1" object 
+
+4. A canvas object "canvas2" is constructed by READING in the ASCII drawing of canvas from the bottom
+5. Objects "canvas1" and "canvas2" are compared by using the .equals() method
+
+In most of the tests they match, but in some tests the drawing is intentionally different 
+from the the command output ( for example see the "canvas 3x3 wrong" file ) to test that 
+the CanvasTester.test() method will correctly return "false"
+
