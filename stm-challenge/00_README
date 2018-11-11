@@ -110,7 +110,10 @@ In most of the tests they match, but in some tests the drawing is intentionally 
 from the the command output ( for example see the "canvas 3x3 wrong" file ) to test that 
 the CanvasTester.test() method will correctly return "false"
 
-
+The most important test is located in the file "total test" in the "/resources/canvas test files"
+directory. It uses all of the functionality of the editor in a complex way and therefore if 
+this automated test pases we can have very high confidence that the software is working as 
+expected.
 
 === 4. Discussion of the edge cases === 
 
