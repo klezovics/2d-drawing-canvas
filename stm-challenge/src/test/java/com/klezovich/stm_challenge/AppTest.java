@@ -26,6 +26,12 @@ public class AppTest extends TestCase {
 	public static Test suite() {
 		return new TestSuite(AppTest.class);
 	}
+	
+	public void totalTest() {
+
+		if (!CanvasTester.test(new File(Property.testDir + "total test")))
+			fail();
+	}
 
 	public void test1by1gridCreation() {
 
