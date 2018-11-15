@@ -1,4 +1,4 @@
-package com.klezovich.stm_challenge.domain;
+package com.klezovich.canvas.domain;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

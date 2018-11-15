@@ -3,8 +3,9 @@ package com.klezovich.stm_challenge;
 import java.io.File;
 import java.util.List;
 
-import com.klezovich.stm_challenge.domain.Canvas;
-import com.klezovich.stm_challenge.domain.CanvasCommand;
+import com.klezovich.canvas.Property;
+import com.klezovich.canvas.domain.Canvas;
+import com.klezovich.canvas.domain.CanvasCommand;
 
 public class CanvasTester {
 

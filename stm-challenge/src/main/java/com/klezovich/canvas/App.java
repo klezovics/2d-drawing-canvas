@@ -1,9 +1,9 @@
-package com.klezovich.stm_challenge;
+package com.klezovich.canvas;
 
 import java.util.Scanner;
 
-import com.klezovich.stm_challenge.domain.Canvas;
-import com.klezovich.stm_challenge.domain.CanvasCommand;
+import com.klezovich.canvas.domain.Canvas;
+import com.klezovich.canvas.domain.CanvasCommand;
 
 /**
  * Hello world!

@@ -1,4 +1,4 @@
-package com.klezovich.stm_challenge.domain;
+package com.klezovich.canvas.domain;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,7 +10,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.klezovich.stm_challenge.domain.CanvasCommand.CanvasCommandType;
+import com.klezovich.canvas.domain.CanvasCommand.CanvasCommandType;
 
 public class Canvas {
 

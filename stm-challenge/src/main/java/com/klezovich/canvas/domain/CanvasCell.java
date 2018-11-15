@@ -1,4 +1,4 @@
-package com.klezovich.stm_challenge.domain;
+package com.klezovich.canvas.domain;
 
 public class CanvasCell {
 

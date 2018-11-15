@@ -2,6 +2,8 @@ package com.klezovich.stm_challenge;
 
 import java.io.File;
 
+import com.klezovich.canvas.Property;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;

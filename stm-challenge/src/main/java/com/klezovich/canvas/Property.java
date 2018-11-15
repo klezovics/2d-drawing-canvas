@@ -1,4 +1,4 @@
-package com.klezovich.stm_challenge;
+package com.klezovich.canvas;
 
 public class Property {
 
